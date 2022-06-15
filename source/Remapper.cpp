@@ -203,6 +203,13 @@ uint32_t Remapper::Remap(uint32_t hidstate)
         }
 
     }
+    
+    if(m_turbocombo && ((hidstate & m_turbocombo) == m_turbocombo)) {
+        m_turbostate ++;
+        newstate &= ~m_turbocombo;
+        if(m_turbostate & 2) newstate = 0;
+    }
+
     return newstate;
 }
 
@@ -406,6 +413,12 @@ void Remapper::ParseConfigFile()
         {
             json_value *homebutton = value->u.object.values[index].value; // Homebutton combo
             m_homebuttonkeys = keystrtokeyval(homebutton->u.string.ptr);
+        }
+
+        else if(strcasecmp(value->u.object.values[index].name, "turbocombo") == 0)
+        {
+            json_value *turbocombo = value->u.object.values[index].value;
+            m_turbocombo = keystrtokeyval(turbocombo->u.string.ptr);
         }
     }
     json_value_free(value);
