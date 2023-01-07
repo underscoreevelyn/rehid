@@ -205,11 +205,11 @@ uint32_t Remapper::Remap(uint32_t hidstate)
     }
     
     if(m_turbocombo && ((hidstate & m_turbocombo) == m_turbocombo)) {
-        m_turbostate ++;
+        m_turbostate = m_turbostate + 1;
         newstate &= ~m_turbocombo;
-        if(m_turbostate & 2) newstate = 0;
+        if (m_turbostate % (m_turbospeed * 2) >= m_turbospeed) newstate &= ~m_turbobuttons;
     }
-
+    
     return newstate;
 }
 
@@ -415,10 +415,20 @@ void Remapper::ParseConfigFile()
             m_homebuttonkeys = keystrtokeyval(homebutton->u.string.ptr);
         }
 
-        else if(strcasecmp(value->u.object.values[index].name, "turbocombo") == 0)
+        else if(strcasecmp(value->u.object.values[index].name, "turbo") == 0)
         {
-            json_value *turbocombo = value->u.object.values[index].value;
-            m_turbocombo = keystrtokeyval(turbocombo->u.string.ptr);
+            json_value *turbo_value = value->u.object.values[index].value;
+
+            for (int i = 0; i < turbo_value->u.object.length; i++) {
+                if (strcasecmp(turbo_value->u.object.values[i].name, "press") == 0) {
+                  m_turbocombo = keystrtokeyval(turbo_value->u.object.values[i].value->u.string.ptr);
+                } else if (strcasecmp(turbo_value->u.object.values[i].name, "mash") == 0) {
+                  m_turbobuttons = keystrtokeyval(turbo_value->u.object.values[i].value->u.string.ptr);
+                } else if (strcasecmp(turbo_value->u.object.values[i].name, "speed") == 0) {
+                  m_turbospeed = turbo_value->u.object.values[i].value->u.integer;
+                }
+
+            }
         }
     }
     json_value_free(value);

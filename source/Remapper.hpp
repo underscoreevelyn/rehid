@@ -49,7 +49,10 @@ class Remapper
             m_docpadtodpad = 0;
             overridecpadpro = 0;
             m_homebuttonkeys = 0;
+            
             m_turbocombo = 0;
+            m_turbobuttons = -1;
+            m_turbospeed = 4;
         }
         KeyObject m_remapkeyobjects[10]; // Support upto 10 remapable key combos
         KeyAndCoordObject m_remaptouchobjects[10]; // Support upto 10 key > touch binds
@@ -71,10 +74,12 @@ class Remapper
         uint8_t m_release = 0;
 
         uint32_t m_turbocombo = 0;
+        uint32_t m_turbobuttons = -1;
+        uint32_t m_turbospeed = 4;
 
     private:
         char *m_filedata;
         uint64_t m_filedatasize;
         char m_fileloc[40];
-        uint32_t m_turbostate;
+        uint32_t m_turbostate = 0;
 };
